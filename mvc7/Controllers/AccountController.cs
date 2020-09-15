@@ -135,32 +135,20 @@ namespace muscshop.Controllers
             SmtpServer.EnableSsl = true;
             SmtpServer.Send(mail);
         }
-
-
-
-
-
         public ActionResult Recovery(string id)
-        {
-            
+        {          
             var user = _storeContext.Users.Where(x => x.PassRecovery.ToString().ToLower() == id.ToString().ToLower()).FirstOrDefault();
-
             return View(user);
         }
-
-
         [HttpPost]
         public ActionResult Recovery(User userpass)
         {
-
             var olduserpass = _storeContext.Users.Where(x => x.UserId == userpass.UserId).FirstOrDefault();
-
             if(!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Incorrect Password, min: 8, max: 24 symbols");
                 return View();
             }
-
             if (userpass.Password == userpass.ConfigmPassword)
             {
                 olduserpass.Password = userpass.Password;
@@ -168,25 +156,19 @@ namespace muscshop.Controllers
                 _storeContext.SaveChanges();
                 return RedirectToAction("login");
             }
-
             else
             {
                 ModelState.AddModelError("", "Passwords don't Match");
                 return View();
             }
         }
-
-
-
-        private const string hashstr = "agqnlvG0oYvUsglS58cX";
-        
+        private const string hashstr = "agqnlvG0oYvUsglS58cX";       
         private string Generatehash(string text)
         {
             using (MD5 md5 = MD5.Create())
             {
                 byte[] bytes = Encoding.ASCII.GetBytes(text);
                 byte[] hashBytes = md5.ComputeHash(bytes);
-
                 StringBuilder sb = new StringBuilder();
                 for(int i = 0; i<hashBytes.Length; i++)
                 {
@@ -195,31 +177,24 @@ namespace muscshop.Controllers
                 return sb.ToString();
             }
         }
-
         public ActionResult Logout()
         {
             Session["User"] = null;
             return RedirectToAction("login");
         }
-
         public ActionResult ChangePass()
         {
             return View();
         }
-
-
         [HttpPost]
         public ActionResult ChangePass(string username, string password, string newpassword)
         {
-
             var user = _storeContext.Users.Where(x => x.Username == username).FirstOrDefault();
-
             if (user == null)
             {
                 ModelState.AddModelError("", "Incorrect Username");
                 return View();
             }
-
             if (user.Password == password && newpassword.Length > 7)
             {
                 user.Password = newpassword;
@@ -228,7 +203,6 @@ namespace muscshop.Controllers
                 Session["User"] = null;
                 return View("Chngpass");
             }
-
             ModelState.AddModelError("", "Incorrect Username or Password");
             return View();
         }
